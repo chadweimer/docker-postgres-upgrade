@@ -37,6 +37,10 @@ fi
 # Create the necessary user
 adduser -D -u $PUID pgupgrade
 
+# Ensure old database is in a clean state
+"/usr/libexec/postgresql${OLDVER}/pg_ctl" start -w -D "/data/pg${OLDVER}"
+"/usr/libexec/postgresql${OLDVER}/pg_ctl" stop -w -D "/data/pg${OLDVER}"
+
 # set ownership
 chown pgupgrade "/data/pg${NEWVER}"
 
