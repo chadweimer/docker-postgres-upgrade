@@ -34,14 +34,11 @@ else
   fi
 fi
 
-# set ownership
-chown postgres:postgres "/data/pg${NEWVER}"
-
 # cd to new directory
 cd "/data/pg${NEWVER}"
 
 # init new db
-gosu postgres initdb -D "/data/pg${NEWVER}" --locale=en_US.UTF-8 --encoding=UTF8
+initdb -D "/data/pg${NEWVER}" --locale=en_US.UTF-8 --encoding=UTF8
 
 # run the upgrade
-gosu postgres pg_upgrade -b "/usr/libexec/postgresql${OLDVER}/" -B "/usr/libexec/postgresql${NEWVER}/" -d "/data/pg${OLDVER}/" -D "/data/pg${NEWVER}/"
+pg_upgrade -b "/usr/libexec/postgresql${OLDVER}/" -B "/usr/libexec/postgresql${NEWVER}/" -d "/data/pg${OLDVER}/" -D "/data/pg${NEWVER}/"
