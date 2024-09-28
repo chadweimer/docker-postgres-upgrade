@@ -34,14 +34,17 @@ else
   fi
 fi
 
+# Create the necessary user
+useradd -u $PUID pgupgrade
+
 # set ownership
-chown $PUID:$PGID "/data/pg${NEWVER}"
+chown pgupgrade "/data/pg${NEWVER}"
 
 # cd to new directory
 cd "/data/pg${NEWVER}"
 
 # init new db
-gosu $PUID initdb -D "/data/pg${NEWVER}" --locale=en_US.UTF-8 --encoding=UTF8
+gosu pgupgrade initdb -D "/data/pg${NEWVER}" --locale=en_US.UTF-8 --encoding=UTF8
 
 # run the upgrade
-gosu $PUID pg_upgrade -b "/usr/libexec/postgresql${OLDVER}/" -B "/usr/libexec/postgresql${NEWVER}/" -d "/data/pg${OLDVER}/" -D "/data/pg${NEWVER}/"
+gosu pgupgrade pg_upgrade -b "/usr/libexec/postgresql${OLDVER}/" -B "/usr/libexec/postgresql${NEWVER}/" -d "/data/pg${OLDVER}/" -D "/data/pg${NEWVER}/"
