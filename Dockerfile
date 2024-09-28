@@ -11,7 +11,8 @@ ENV OLDVER="${OLDVER:-15}" \
   NEWVER="${NEWVER:-16}"
 
 # install the postgres packages requested
-RUN apk add --no-cache postgresql${OLDVER} postgresql${NEWVER}
+RUN apk add --no-cache postgresql${OLDVER} postgresql${NEWVER} &&\
+  apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing gosu
 
 COPY postgres_upgrade.sh /
 
