@@ -1,0 +1,40 @@
+name: Build & Publish Image
+on:
+  workflow_dispatch:
+    inputs:
+        old_version:
+          description: Old PostgreSQL version
+          default: 15
+          required: true
+          type: number
+        new_version:
+          description: New PostgreSQL version
+          default: 16
+          required: true
+          type: number
+
+env:
+  CONTAINER_REGISTRY: ghcr.io
+  CONTAINER_IMAGE_NAME: ${{ github.repository_owner }}/postgres-upgrade
+  CONTAINER_IMAGE_TAG: ${{ inputs.old_version }}-to-${{ inputs.new_version }}
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v2
+        with:
+          registry: ${{ env.CONTAINER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Image
+        run: |
+          docker build --pull \
+            --build-arg OLDVER=${{ inputs.old_version }} \
+            --build-arg NEWVER=${{ inputs.new_version }} \
+            -t ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ env.CONTAINER_IMAGE_TAG }} .
+      - name: Push Image
+        run: |
+          docker push ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ env.CONTAINER_IMAGE_TAG }}
