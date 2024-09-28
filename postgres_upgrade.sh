@@ -35,7 +35,7 @@ else
 fi
 
 # Create the necessary user
-useradd -u $PUID pgupgrade
+adduser -D -u $PUID pgupgrade
 
 # set ownership
 chown pgupgrade "/data/pg${NEWVER}"
