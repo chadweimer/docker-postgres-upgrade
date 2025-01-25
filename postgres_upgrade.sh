@@ -34,21 +34,22 @@ else
   fi
 fi
 
-# Create the necessary user
-adduser -D -u $PUID pgupgrade
+# Ensure postgres run directory exists
+mkdir -p /run/postgresql
+chown -R postgres:postgres
 
 # Ensure old database is in a clean state
-gosu pgupgrade "/usr/libexec/postgresql${OLDVER}/pg_ctl" start -w -D "/data/pg${OLDVER}"
-gosu pgupgrade "/usr/libexec/postgresql${OLDVER}/pg_ctl" stop -w -D "/data/pg${OLDVER}"
+gosu postgres "/usr/libexec/postgresql${OLDVER}/pg_ctl" start -w -D "/data/pg${OLDVER}"
+gosu postgres "/usr/libexec/postgresql${OLDVER}/pg_ctl" stop -w -D "/data/pg${OLDVER}"
 
 # set ownership
-chown pgupgrade "/data/pg${NEWVER}"
+chown postgres:postgres "/data/pg${NEWVER}"
 
 # cd to new directory
 cd "/data/pg${NEWVER}"
 
 # init new db
-gosu pgupgrade initdb -D "/data/pg${NEWVER}" --locale=en_US.UTF-8 --encoding=UTF8
+gosu postgres initdb -D "/data/pg${NEWVER}" --locale=en_US.UTF-8 --encoding=UTF8
 
 # run the upgrade
-gosu pgupgrade pg_upgrade -b "/usr/libexec/postgresql${OLDVER}/" -B "/usr/libexec/postgresql${NEWVER}/" -d "/data/pg${OLDVER}/" -D "/data/pg${NEWVER}/"
+gosu postgres pg_upgrade -b "/usr/libexec/postgresql${OLDVER}/" -B "/usr/libexec/postgresql${NEWVER}/" -d "/data/pg${OLDVER}/" -D "/data/pg${NEWVER}/"
