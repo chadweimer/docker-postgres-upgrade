@@ -6,6 +6,9 @@ set -e
 OLDVER="${OLDVER:-}"
 NEWVER="${NEWVER:-}"
 
+# superuser for database
+PGUSER="${PGUSER:-postgres}"
+
 # make sure old directory exists
 if [ ! -d "/data/pg${OLDVER}" ]
 then
@@ -49,7 +52,7 @@ chown postgres:postgres "/data/pg${NEWVER}"
 cd "/data/pg${NEWVER}"
 
 # init new db
-gosu postgres initdb -D "/data/pg${NEWVER}" --locale=en_US.UTF-8 --encoding=UTF8
+gosu postgres initdb -u ${PGUSER} -D "/data/pg${NEWVER}" --locale=en_US.UTF-8 --encoding=UTF8
 
 # run the upgrade
-gosu postgres pg_upgrade -b "/usr/libexec/postgresql${OLDVER}/" -B "/usr/libexec/postgresql${NEWVER}/" -d "/data/pg${OLDVER}/" -D "/data/pg${NEWVER}/"
+gosu postgres pg_upgrade -u ${PGUSER} -b "/usr/libexec/postgresql${OLDVER}/" -B "/usr/libexec/postgresql${NEWVER}/" -d "/data/pg${OLDVER}/" -D "/data/pg${NEWVER}/"
