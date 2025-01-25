@@ -36,7 +36,7 @@ fi
 
 # Ensure postgres run directory exists
 mkdir -p /run/postgresql
-chown -R postgres:postgres
+chown -R postgres:postgres /run/postgresql
 
 # Ensure old database is in a clean state
 gosu postgres "/usr/libexec/postgresql${OLDVER}/pg_ctl" start -w -D "/data/pg${OLDVER}"
