@@ -53,7 +53,7 @@ chown postgres:postgres "/data/pg${NEWVER}"
 cd "/data/pg${NEWVER}"
 
 # init new db
-cat $PGPASSWORD > .pgpassword
+echo "$PGPASSWORD" > .pgpassword
 gosu postgres initdb -U ${PGUSER} --pwfile=.pgpassword -D "/data/pg${NEWVER}" --locale=en_US.UTF-8 --encoding=UTF8
 
 # run the upgrade
